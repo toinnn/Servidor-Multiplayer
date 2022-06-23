@@ -1,0 +1,90 @@
+*{
+    margin : 0 ;
+    padding : 0;
+    box-sizing:border-box;
+}
+:root{
+    --cor-jump_buttom : #c5bfb5f1;
+    --cor-jump_buttom_hover : #999794;
+    --cor-jump_buttom_active : #69696700;
+}
+#msg{
+
+    background-color:chartreuse;
+
+}
+
+body{
+    background-color :#460273;
+}
+
+.game-board{
+
+    width: 100%;
+    border-bottom: 12px solid rgb(7, 77, 13);
+    background: linear-gradient(#3792b6 , #E0F6FF);
+    height: 500px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+.pipe{
+    width : 80px;
+    position: absolute;
+    bottom: 0;
+    /* left : 80px; */
+    animation: pipe_move 2.5s infinite linear;
+    
+}
+.button_jump{
+    background-color: var(--cor-jump_buttom);
+    transition : background .25s ease , box-shadow .25s ease ;
+    border-radius: 10px;
+    padding: 10px 15px;
+    position: relative;
+    left: 47.5%;
+    font-weight : 500;
+    font-size :large;
+    margin : 10px;
+    color :rgb(85, 83, 83);
+    box-shadow: 0 0 0 0 rgba(143 , 64 , 248 ,0.5 ) , 0 0 0 0 rgba( 39 , 200 , 255 , .5);
+}
+.button_jump:hover{
+    background-color: var(--cor-jump_buttom_active);
+    color :rgb(248, 248, 248) ;
+    transform : translate(0 , -5px);
+    box-shadow: 10px -10px 25px #8200fc , -10px 10px 25px #208fe9 ; 
+    letter-spacing: 0.25em;
+}
+/* color :rgb(248, 248, 248) ; */
+.button_jump:active{
+    background-color: var(--cor-jump_buttom_hover);
+}
+
+.mario{
+    position: absolute;
+    bottom: 0;
+    width : 150px;
+}
+.cloud{
+    position: absolute;
+    width : 450px;
+    animation : cloud_move 34s infinite linear;
+}
+
+@keyframes pipe_move{
+
+    from {
+        right : -80px;
+    }to{
+        right : 100%;
+    }
+
+}
+@keyframes cloud_move{
+    from{
+        right : -450px;
+    }to{
+        right : 100%;
+    }
+}
