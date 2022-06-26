@@ -36,8 +36,9 @@ class game():
         self.last_obstacle_id = 0
         self.game_stoped = False
 
-        self.add_elem("images//pipe.png")
+        # self.add_elem("images//pipe.png")
         self.add_double_elem("images//Flappy_pipe_long.png")
+        self.mario.style.bottom = "-30px"
         # self.pipe.style.animationPlayState = 'paused'
 
     def gravity(self , ms = 1000) -> None :
@@ -76,10 +77,13 @@ class game():
             # pipe.style.animation = 'pipe_move 2.5s infinite linear'
             # pipe.style.animationPlayState = 'running'
             for i in self.obstacles :
+                # aux = i
                 self.obstacles.remove(i)
-                self.board.removeChild(i)
+                self.board.removeChild(i[0])
+                self.board.removeChild(i[1])
                 # i.style.animationPlayState = 'running'
-            self.add_elem("images//pipe.png")
+            # self.add_elem("images//pipe.png")
+            self.add_double_elem("images//Flappy_pipe_long.png")
             self.game_stoped = False
 
     def game_loop_iteration(self):
@@ -87,33 +91,36 @@ class game():
             for i in self.obstacles :
                 self.if_stop(i )
                 self.if_out( i ,-24)
-            if self.game_stoped == True :
-                for i in self.obstacles :
-                    i.style.animationPlayState = 'paused'
-        
+            # if self.game_stoped == True :
+            #     for i in self.obstacles :
+            #         i[0].style.animationPlayState = 'paused'
+            #         i[1].style.animationPlayState = 'paused'
         # self.if_stop(self.pipe)
         # self.if_out( ,-24)
         pass
     def if_out(self , pipe , screen_offset):
         # for i in self.obstacles :
-        if pipe.offsetLeft <= screen_offset :
+        if pipe[0].offsetLeft <= screen_offset :
             # self.obstacles.remove(pipe)
             # self.board.removeChild(pipe)
             js.console.log("Objeto removido")
 
     def if_stop(self, Pipe_pair):
+        #Offset entre cabeça do Mario e Cano é de 580px :160px
+        #Offset entre pé do Mario e Cano é de 85px : 505px
         pos_under = Pipe_pair[0].offsetLeft
-        pos_above = Pipe_pair[1].offsetLeft
+        # pos_above = Pipe_pair[1].offsetLeft
         
-        under_higher = float(Pipe_pair[0].style.bottom[:-2])
-        above_higher = float(Pipe_pair[1].style.bottom[:-2])
+        pipe_under_higher = float(Pipe_pair[0].style.bottom[:-2])
+        pipe_above_higher = float(Pipe_pair[1].style.bottom[:-2])
+        mario_higher = float(mario.style.bottom[:-2])
         
-        # if pos <= 120 and float(mario.style.bottom[:-2]) <= 70 and pos >= 0 and self.buttom_Jump == True:
-
-        if pos_under <= 120 and float(mario.style.bottom[:-2]) <= under_higher and pos_under >= 0 and self.buttom_Jump == True:
-            if float(mario.style.bottom[:-2]) >= above_higher :
+        if pos_under <= -260 and pos_under >= -490 and self.buttom_Jump == True:
+            if  mario_higher >= (pipe_above_higher + 160) or mario_higher <= (pipe_under_higher + 505):
                 # Pipe.style.animation = "none"
-                Pipe.style.animationPlayState = 'paused'
+                for i in self.obstacles :
+                    i[0].style.animationPlayState = 'paused'
+                    i[1].style.animationPlayState = 'paused'
                 # Pipe.style.left = f"{pos}px"
                 mario.src = "images//game-over.png"
                 mario.style.width = "75px"
@@ -142,6 +149,7 @@ class game():
         
         self.last_obstacle_id += 1
         new_image.style.animation = "pipe_long_move 2.0s infinite linear"
+        # new_image.style.left = "-490px"
         return new_image
         # self.obstacles += [new_image]
         print("Ele criou o novo objetoooooo!!!!!!ooooo")
