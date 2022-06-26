@@ -35,10 +35,12 @@ class game():
         self.obstacles = []
         self.last_obstacle_id = 0
         self.game_stoped = False
+        self.score_record = 0
+        self.score = 0
 
         # self.add_elem("images//pipe.png")
         self.add_double_elem("images//Flappy_pipe_long.png")
-        self.mario.style.bottom = "-30px"
+        # self.mario.style.bottom = "-30px"
         # self.pipe.style.animationPlayState = 'paused'
 
     def gravity(self , ms = 1000) -> None :
@@ -60,7 +62,7 @@ class game():
         pyscript.write('msg',var[:-2])
         
         # mario.style.bottom = f"{float(var[:-2]) + 80}px"
-        js.console.log(f"entrou e self.buttom_Jump = {self.buttom_Jump}")
+        # js.console.log(f"entrou e self.buttom_Jump = {self.buttom_Jump}")
         if self.buttom_Jump :
             #PULA
             var =js.window.getComputedStyle( mario).bottom
@@ -85,25 +87,36 @@ class game():
             # self.add_elem("images//pipe.png")
             self.add_double_elem("images//Flappy_pipe_long.png")
             self.game_stoped = False
+            self.score = 0
 
     def game_loop_iteration(self):
-        if self.game_stoped != True : #Game Not Stoped
-            for i in self.obstacles :
-                self.if_stop(i )
-                self.if_out( i ,-24)
+        if self.game_stoped != True and self.buttom_Jump : #Game Not Stoped
+            for i in range(len(self.obstacles)) :
+                if self.obstacles[i][2] :
+                    self.if_stop(self.obstacles[i] )
+                    if self.if_hit( self.obstacles[i] ) :
+                        # self.obstacles[i][2] = False
+                        self.obstacles[i] = (self.obstacles[i][0] , self.obstacles[i][1] , False)
+
+                self.if_out( self.obstacles[i] ,-490)#24)
+                
             # if self.game_stoped == True :
             #     for i in self.obstacles :
             #         i[0].style.animationPlayState = 'paused'
             #         i[1].style.animationPlayState = 'paused'
-        # self.if_stop(self.pipe)
-        # self.if_out( ,-24)
-        pass
-    def if_out(self , pipe , screen_offset):
-        # for i in self.obstacles :
-        if pipe[0].offsetLeft <= screen_offset :
-            # self.obstacles.remove(pipe)
-            # self.board.removeChild(pipe)
+    
+    def if_hit(self , Pipe):
+        if Pipe[0].offsetLeft <= -420 :
+            self.score += 1
+            return True
+        return False
+    def if_out(self , pipe_pair , screen_offset):
+        if pipe_pair[0].offsetLeft <= screen_offset :
+            self.obstacles.remove( (pipe_pair[0] , pipe_pair[1] , False ) )
+            self.board.removeChild(pipe_pair[0])
+            self.board.removeChild(pipe_pair[1])
             js.console.log("Objeto removido")
+            self.add_double_elem("images//Flappy_pipe_long.png")
 
     def if_stop(self, Pipe_pair):
         #Offset entre cabeça do Mario e Cano é de 580px :160px
@@ -127,10 +140,18 @@ class game():
                 buttom_jump.textContent = "Re-Start"
                 self.buttom_Jump = False
                 self.game_stoped = True
+                msg = f"SCORE FOI DE : {self.score}\n++ ÚLTIMO RECORD É DE {self.score_record} "
+                # js.console.log()
+                if self.score > self.score_record :
+                    self.score_record = self.score
+                    msg += f"++ \nNOVO RECORDE É DE : {self.score_record}"
+                js.console.log(msg)
+                pyscript.write('msg',msg)
     def add_double_elem(self,src):
         first = self.add_elem(src)
         secon = self.add_elem(src)
-        self.obstacles += [(first , secon )]
+        pipe_non_counted = True
+        self.obstacles += [(first , secon , pipe_non_counted )]
         self.obstacles[-1][0].style.bottom = "-450px"
         self.obstacles[-1][0].style.width = ""
 
@@ -149,7 +170,7 @@ class game():
         
         self.last_obstacle_id += 1
         new_image.style.animation = "pipe_long_move 2.0s infinite linear"
-        # new_image.style.left = "-490px"
+        # new_image.style.left = "-420px"
         return new_image
         # self.obstacles += [new_image]
         print("Ele criou o novo objetoooooo!!!!!!ooooo")
@@ -170,7 +191,7 @@ def main():
     # pipe_pos = pipe.getBoundingClientRect()
     jogo = game()
     
-    js.setInterval(to_js(lambda : jogo.game_loop_iteration() ) , 1 )
+    js.setInterval(to_js(lambda : jogo.game_loop_iteration() ) , 10 )
     jump(mario)
     jump(mario)
     buttom_jump.textContent = "Start"
