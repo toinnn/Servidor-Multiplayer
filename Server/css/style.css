@@ -28,14 +28,25 @@ body{
     position: relative;
     overflow: hidden;
 }
-.pipe{
-    width : 80px;
+
+/* .pipe{
+    /* width : 800px; 
     position: absolute;
-    bottom: 0;
-    /* left : 80px; */
-    animation: pipe_move 2.5s infinite linear;
+    bottom: -450px; /*Mínimo : -450px , Máximo : ?px 
+    left : 80px; 
+    /* animation: pipe_move 2.5s infinite linear; 
     
-}
+} 
+.pipe2{
+    /* width : 800px; 
+    position: absolute;
+    bottom: -30px; /*Mínimo : 150px , Máximo : -30px ?px
+    left : 80px; 
+    /* animation: pipe_move 2.5s infinite linear; 
+    transform: rotate(180deg) scaleX(-1) ;
+    /* -webkit-box-reflect: right; 
+}  */
+
 .button_jump{
     background-color: var(--cor-jump_buttom);
     transition : background .25s ease , box-shadow .25s ease ;
@@ -76,6 +87,15 @@ body{
 
     from {
         right : -80px;
+    }to{
+        right : 100%;
+    }
+
+}
+@keyframes pipe_long_move{
+
+    from {
+        right : -500px;
     }to{
         right : 100%;
     }
