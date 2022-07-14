@@ -1,23 +1,27 @@
 #define PORT 8080
 
 #include <stdio.h>
-// #include <netinet/in.h>
 #include <winsock2.h>
 #include "include/pthread.h"
-//#include "include/curl/curl.h"
-// #include <netdb.h>
 
 #pragma comment(lib, "Ws2_32.lib")
-// #pragma comment(lib, "pthreadVC2.lib")
+struct 
+void request_handle(){
 
-void start_server(){
+    return ;
+}
+void start_server(int client , int x , char buff , int csize , int caddr , int server ){
     printf("[Server Ouvindo...]");
-
 
     while(1)
     {
         client = accept(server , (struct sockaddr* ) &caddr , &csize );
-        printf("%i" , &client);
+        x = recv(client , buff ,sizeof buff , 0);
+        if(x > 0){
+            //Chama nova thread()
+            pthread_t tdid;
+            pthread_create(&tdid , NULL , request_handle , (void*)td);
+        }
     }
     /*while True:
             
@@ -86,5 +90,6 @@ int main(){
     // address.sin_addr.s_addr = INADDR_ANY;
     // address.sin_port = htons(PORT);
 
+    pthread_exit(NULL) ;
     return 0;
 }
