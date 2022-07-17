@@ -1,8 +1,9 @@
 # depslib dependency file v1.0
-1657772788 source:c:\users\limaa\onedrive\documentos\codeblocks projects\servidor-multiplayer-ap2\main.c
+1657792069 source:c:\users\limaa\onedrive\documentos\codeblocks projects\servidor-multiplayer-ap2\main.c
 	<stdio.h>
 	<winsock2.h>
 	<pthread.h>
+	<string.h>
 
 1657772803 source:c:\users\limaa\onedrive\documentos\codeblocks projects\servidor-multiplayer-ap2\server\server.c
 
