@@ -6,10 +6,15 @@
 #include <string.h>
 
 #pragma comment(lib, "Ws2_32.lib")
-
+char* concat_str(char* str1, char* str2) {
+    char* result = malloc(strlen(str1) + strlen(str2));
+    memcpy(result, str1, strlen(str1));
+    memcpy(result + strlen(str1), str2, strlen(str2));
+    return result;
+}
 char *meu_concat(char *a, char*b){
 
-    char *c = malloc(sizeof(a)+sizeof(b));
+    char *c = malloc(strlen(a)+strlen(b));
     int a_len = strlen(a);
     int i ;
     for(i=0; i< a_len ; i++)
@@ -22,7 +27,7 @@ char *meu_concat(char *a, char*b){
     {
         c[i + a_len] = b[i];
     }
-    printf("O C final e %s" , c);
+    //printf("O C final e %s" , c);
     return c;
 }
 char *mystrcat(char *a, char *b) {
@@ -93,9 +98,13 @@ void *handle_request(void *client_sock_tmp ){
         sprintf(d , "%d" , c);
         printf("Concatenou\n");
 
-        char *msg = meu_concat(&a,&output);
+        //char *msg = meu_concat(&a,&output);
+        char *msg = concat_str(&a,&output);
+        printf("minha msg \n%s" , msg );
 
-        printf("minha msg %s" , msg );
+        send(client_sock , msg , strlen(msg) , 0 );
+        fflush(stdout) ;
+        free(msg);
         /*strcat(a , (char )c);*/
         //printf("ola %s\n" , c );
 
