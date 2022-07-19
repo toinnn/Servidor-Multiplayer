@@ -6,8 +6,26 @@
 #include <string.h>
 
 #pragma comment(lib, "Ws2_32.lib")
+
+short end_with(char* str1, char* str2){
+    char *pointer = strstr(str1 , str2) ;
+    //char result[100];
+    //memcpy(result , str1 + pointer, strlen(str1) - (pointer - str1));
+    return pointer != NULL ;
+}
+int get_file_size(char *filename) // path to file
+{
+    FILE *p_file = NULL;
+    p_file = fopen(filename,"rb");
+    fseek(p_file,0,SEEK_END);
+    int size = ftell(p_file);
+    fclose(p_file);
+    return size;
+}
 char* concat_str(char* str1, char* str2) {
-    char* result = malloc(strlen(str1) + strlen(str2));
+    int new_len = strlen(str1) + strlen(str2) ;
+    char* result = malloc(new_len );
+    memset(result , 0 , new_len);
     memcpy(result, str1, strlen(str1));
     memcpy(result + strlen(str1), str2, strlen(str2));
     return result;
@@ -73,38 +91,53 @@ void *handle_request(void *client_sock_tmp ){
         char oi[300] = "C:\\Users\\limaa\\OneDrive\\Documentos\\CodeBlocks Projects\\Servidor-Multiplayer-Ap2\\Server" ;
         token = strtok(NULL, " ") ;
         strcat(oi ,token) ;
-        char a[] = "HTTP/1.1 200 OK\nContent-Type: image/png\n\n";
+        char a[61];
+        if (end_with(token , ".html")){
+            printf("TERMINOU COM .HTML MEU PARCEIRO !!!!!!!!!!");
+            char a[] = "HTTP/1.1 200 OK\nContent-Type: text/html charset=UTF-8\n\n";
+        }else if( end_with(token , ".css") ){
+            printf("TERMINOU COM .CSS MEU PARCEIRO !!!!!!!!!!");
+            char a[] = "HTTP/1.1 200 OK\nContent-Type: text/css \n\n";
+        }else if( end_with(token , ".png") ){
+            printf("TERMINOU COM .PNG MEU PARCEIRO !!!!!!!!!!");
+            char a[] = "HTTP/1.1 200 OK\nContent-Type: image/png \n\n";
+        }else{
+            printf("TERMINOU COM .GIF MEU PARCEIRO !!!!!!!!!!");
+            char a[] = "HTTP/1.1 200 OK\nContent-Type: image/gif \n\n";
+        }
+
         /*strcat(a , ");
         strcat(a , ");*/
-
+        int f_len = get_file_size(oi);
         int c = getc;
-        FILE *file ;/*, *file2;
-        file2 = fopen("C:\\temporario_me_apague.txt","w");
-        fprintf(file2 ,"%s", a );
-        if (file2) {
-            while ((c = getc(file2)) != EOF)
-        putchar(c);
-        fclose(file2);
-        }*/
-        file = fopen(oi, "r");
+        FILE *file ;
+        file = fopen(oi, "rb");
+
         int index = 0 ;
-        char output[2000] = {0x00};
+        char output[f_len ]; //= {0x00};
+        memset(output, 0 , f_len);
         if (file) {
-            while ((c = getc(file)) != EOF)
-        //putchar(c);
-        output[index++] = (char)putchar(c);
+            int i = 0 ;
+            //while( (fgets(&output[i++],sizeof(char)+1,file) != NULL) && (i<f_len) ) ;
+            fread(&output , 1, f_len  , file );
         fclose(file);
-}       char d[1000] ;
-        sprintf(d , "%d" , c);
+}
         printf("Concatenou\n");
 
         //char *msg = meu_concat(&a,&output);
         char *msg = concat_str(&a,&output);
-        printf("minha msg \n%s" , msg );
+        printf("minha msg :\n\n%s" , msg );
 
+    /*unsigned char *in, *sai;
+    while (*msg)
+    {   if (*msg<128) *sai++=*msg++;
+        else *sai++=0xc2+(*msg>0xbf), *sai++=(*msg++&0x3f)+0x80;
+    }*/
         send(client_sock , msg , strlen(msg) , 0 );
         fflush(stdout) ;
         free(msg);
+        //free(sai);
+        //closesocket(client_sock);
         /*strcat(a , (char )c);*/
         //printf("ola %s\n" , c );
 
