@@ -4,8 +4,30 @@
 #include <winsock2.h>
 #include <pthread.h>
 #include <string.h>
+///#include <netinet.h>
+
 
 #pragma comment(lib, "Ws2_32.lib")
+
+char* iso88959_to_utf8(const char *str)
+{
+    char *utf8 = malloc(1 + (2 * strlen(str)));
+
+    if (utf8) {
+        char *c = utf8;
+        for (; *str; ++str) {
+            if (*str & 0x80) {
+                *c++ = *str;
+            } else {
+                *c++ = (char) (0xc0 | (unsigned) *str >> 6);
+                *c++ = (char) (0x80 | (*str & 0x3f));
+            }
+        }
+        *c++ = '\0';
+    }
+    free(str);
+    return utf8;
+}
 
 short end_with(char* str1, char* str2){
     char *pointer = strstr(str1 , str2) ;
@@ -92,22 +114,20 @@ void *handle_request(void *client_sock_tmp ){
         token = strtok(NULL, " ") ;
         strcat(oi ,token) ;
         char a[61];
-        if (end_with(token , ".html")){
-            printf("TERMINOU COM .HTML MEU PARCEIRO !!!!!!!!!!");
-            char a[] = "HTTP/1.1 200 OK\nContent-Type: text/html charset=UTF-8\n\n";
-        }else if( end_with(token , ".css") ){
+        if( end_with(token , ".css") ){
             printf("TERMINOU COM .CSS MEU PARCEIRO !!!!!!!!!!");
-            char a[] = "HTTP/1.1 200 OK\nContent-Type: text/css \n\n";
-        }else if( end_with(token , ".png") ){
+            char a[] = "HTTP/1.1 200 OK\r\nContent-Type: text/css \r\n";
+        }else if( end_with(token , ".png") || end_with(token , ".jpg") ){
             printf("TERMINOU COM .PNG MEU PARCEIRO !!!!!!!!!!");
-            char a[] = "HTTP/1.1 200 OK\nContent-Type: image/png \n\n";
-        }else{
+            char a[] = "HTTP/1.1 200 OK\r\nContent-Type: image/png \r\n";
+        }else if(end_with(token , ".gif")){
             printf("TERMINOU COM .GIF MEU PARCEIRO !!!!!!!!!!");
-            char a[] = "HTTP/1.1 200 OK\nContent-Type: image/gif \n\n";
-        }
+            char a[] = "HTTP/1.1 200 OK\r\nContent-Type: image/gif \r\n";
+        }else {
+            printf("TERMINOU COM .HTML MEU PARCEIRO !!!!!!!!!!");
+            char a[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html \r\n";}
 
-        /*strcat(a , ");
-        strcat(a , ");*/
+
         int f_len = get_file_size(oi);
         int c = getc;
         FILE *file ;
@@ -118,24 +138,27 @@ void *handle_request(void *client_sock_tmp ){
         memset(output, 0 , f_len);
         if (file) {
             int i = 0 ;
-            //while( (fgets(&output[i++],sizeof(char)+1,file) != NULL) && (i<f_len) ) ;
+            ///while( (fgets(&output[i++],sizeof(char)+1,file) != NULL) && (i<f_len) ) ;
             fread(&output , 1, f_len  , file );
         fclose(file);
 }
         printf("Concatenou\n");
 
-        //char *msg = meu_concat(&a,&output);
+        ///char *msg = meu_concat(&a,&output);
+        /*write(client_sock , &a ,strlen(a));
+        write(client_sock , &output ,f_len);*/
         char *msg = concat_str(&a,&output);
         printf("minha msg :\n\n%s" , msg );
 
-    /*unsigned char *in, *sai;
-    while (*msg)
-    {   if (*msg<128) *sai++=*msg++;
-        else *sai++=0xc2+(*msg>0xbf), *sai++=(*msg++&0x3f)+0x80;
-    }*/
+
+
+        ///send(client_sock , a , strlen(a) , 0 );
+        ///send(client_sock , &output , strlen(output) , 0 );
         send(client_sock , msg , strlen(msg) , 0 );
         fflush(stdout) ;
         free(msg);
+
+
         //free(sai);
         //closesocket(client_sock);
         /*strcat(a , (char )c);*/
